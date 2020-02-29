@@ -68,6 +68,10 @@ ActiveRecord::Schema.define(version: 2020_02_29_055314) do
     t.decimal "subtotal", precision: 6, scale: 2
     t.decimal "tax", precision: 5, scale: 2
     t.decimal "total", precision: 6, scale: 2
+    t.boolean "ready", default: false
+    t.time "ready_time"
+    t.boolean "delivered", default: false
+    t.time "delivered_time"
     t.text "instructions"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -121,16 +125,18 @@ ActiveRecord::Schema.define(version: 2020_02_29_055314) do
   create_table "reviews", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "restaurant_id", null: false
+    t.bigint "orders_id", null: false
     t.integer "score", limit: 2, null: false
     t.text "comments"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["orders_id"], name: "index_reviews_on_orders_id"
     t.index ["restaurant_id"], name: "index_reviews_on_restaurant_id"
     t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name", null: false
+    t.string "username", null: false
     t.string "password_digest", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -145,6 +151,7 @@ ActiveRecord::Schema.define(version: 2020_02_29_055314) do
   add_foreign_key "orders", "users"
   add_foreign_key "profiles", "users"
   add_foreign_key "restaurants", "users"
+  add_foreign_key "reviews", "orders", column: "orders_id"
   add_foreign_key "reviews", "restaurants"
   add_foreign_key "reviews", "users"
 end
